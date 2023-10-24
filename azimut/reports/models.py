@@ -49,7 +49,7 @@ class Service(models.Model):
 class Payment(models.Model):
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     date = models.DateField(verbose_name="Дата")
-    amount = models.FloatField(verbose_name="Стоимость")
+    amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Стоимость")
     counterparty = models.ForeignKey("Counterparty", on_delete=models.PROTECT, verbose_name="Контрагент")
     object = models.ForeignKey("Object", on_delete=models.PROTECT, verbose_name="Объект")
 
