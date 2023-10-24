@@ -23,9 +23,9 @@ def load_config(path: str | None) -> Config:
     return Config(
         db=DatabaseConfig(
             engine=env('ENGINE'),
-            database=env('NAME'),
-            db_host=env('HOST'),
-            db_user=env('USER'),
-            db_password=env('PASSWORD'),
+            database=env('DATABASE'),
+            db_host=env('DB_HOST'),
+            db_user=env('DB_USER'),
+            db_password=env('DB_PASSWORD'),
         )
     )
