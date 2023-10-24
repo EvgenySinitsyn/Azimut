@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from dotenv import find_dotenv
+
+from azimut.config_data.config import load_config, Config
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'reports.apps.ReportsConfig',
 ]
 
 MIDDLEWARE = [
@@ -73,10 +78,15 @@ WSGI_APPLICATION = 'azimut.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+config: Config = load_config(find_dotenv('.env'))
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': config.db.engine,
+        'NAME': config.db.database,
+        'USER': config.db.db_user,
+        'PASSWORD': config.db.db_password,
+        'HOST': config.db.db_host,
     }
 }
 
@@ -103,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
