@@ -3,9 +3,10 @@ from django.db import models
 
 
 class Counterparty(models.Model):
+
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     name = models.CharField(max_length=255, verbose_name="Наименование")
-    inn = models.IntegerField(verbose_name="ИНН")
+    inn = models.BigIntegerField(verbose_name="ИНН", unique=True)
 
     def __str__(self):
         return self.name
@@ -19,11 +20,11 @@ class Counterparty(models.Model):
 class Upd(models.Model):
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     date = models.DateField(verbose_name="Дата")
-    number = models.IntegerField(verbose_name="Номер УПД")
-    counterparty = models.ForeignKey("Counterparty", on_delete=models.PROTECT, verbose_name="Контрагент")
+    number = models.IntegerField(verbose_name="Номер УПД", unique=True)
+    counterparty = models.ForeignKey("Counterparty", on_delete=models.CASCADE, verbose_name="Контрагент")
 
     def __str__(self):
-        return self.number
+        return str(self.number)
 
     class Meta:
         verbose_name = "УПД"
@@ -35,7 +36,7 @@ class Service(models.Model):
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     name = models.CharField(max_length=255, verbose_name="Наименование")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Стоимость")
-    upd = models.ForeignKey("Upd", on_delete=models.PROTECT, verbose_name="УПД")
+    upd = models.ForeignKey("Upd", on_delete=models.CASCADE, verbose_name="УПД")
 
     def __str__(self):
         return self.name
@@ -50,11 +51,11 @@ class Payment(models.Model):
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     date = models.DateField(verbose_name="Дата")
     amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Размер платежа")
-    counterparty = models.ForeignKey("Counterparty", on_delete=models.PROTECT, verbose_name="Контрагент")
-    object = models.ForeignKey("Object", on_delete=models.PROTECT, verbose_name="Объект")
+    counterparty = models.ForeignKey("Counterparty", on_delete=models.CASCADE, verbose_name="Контрагент")
+    object = models.ForeignKey("Object", on_delete=models.CASCADE, verbose_name="Объект")
 
     def __str__(self):
-        return self.amount
+        return str(self.amount)
 
     class Meta:
         verbose_name = "Платеж"
@@ -64,7 +65,7 @@ class Payment(models.Model):
 
 class Object(models.Model):
     name = models.CharField(max_length=255, verbose_name="Наименование")
-    group = models.ForeignKey(Group, on_delete=models.PROTECT, verbose_name="Группа пользователя")
+    group = models.ManyToManyField(Group, verbose_name="Группа пользователя", through="ObjectGroup")
 
     def __str__(self):
         return self.name
@@ -73,3 +74,18 @@ class Object(models.Model):
         verbose_name = "Объект"
         verbose_name_plural = "Объекты"
         ordering = ["id"]
+
+
+class ObjectGroup(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name="Группа пользователя")
+    object_db = models.ForeignKey(Object, on_delete=models.CASCADE, verbose_name="Объект")
+    fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Взнос")
+
+    def __str__(self):
+        return str(self.fee)
+
+    class Meta:
+        verbose_name = "Взнос"
+        verbose_name_plural = "Взносы"
+        ordering = ["id"]
+
