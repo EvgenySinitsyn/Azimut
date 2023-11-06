@@ -7,10 +7,6 @@ PADE_INDEX_SERVICES = 1
 PADE_INDEX_PAYMENTS = 0
 
 
-# def set_is_relevant_false(month, year):
-#     Service.objects.filter(upd__date__year=year, upd__date__month=month).update(is_relevant=False)
-#     Payment.objects.filter(date__year=year, date__month=month).update(is_relevant=False)
-
 def preparation_for_recording(work_book):
     current_period = work_book.sheet_by_index(PADE_INDEX_PAYMENTS).row_values(0)[3]
     current_period = datetime.datetime.strptime(current_period, '%d.%m.%Y').date()
@@ -106,11 +102,7 @@ def start_parsing(path_excel: str):
     # Upd.objects.all().delete()
     # Service.objects.all().delete()
     # Payment.objects.all().delete()
-
-    start_time = datetime.datetime.now()
     work_book = xlrd.open_workbook(r'{}'.format(path_excel))
     preparation_for_recording(work_book)
     parse_services(work_book, PADE_INDEX_SERVICES)
     parse_payments(work_book, PADE_INDEX_PAYMENTS)
-    end_time = datetime.datetime.now()
-    print((end_time - start_time))
