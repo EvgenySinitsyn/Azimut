@@ -113,16 +113,25 @@
 		<thead>
 			<tr>
 				<th colspan="5" style="background: #FFFFFF; border: 0px">
+					{% if group_name == 'АЗИМУТ' %}
 					<form enctype="multipart/form-data" method="post">
 						{% csrf_token %}
 						<p>
-							<input type="file" name="excel_file" accept=".xlsx" style="font-size: 14px;">
+							<input type="file" name="excel_file" accept=".xlsx, .xls" style="font-size: 14px;">
 							<input type="submit" value="Отправить" style="font-size: 14px;" name="download_file">
 						</p>
+<!--						{% if messages %}-->
+<!--							{% for message in messages %}-->
+<!--								    <div class="okno">-->
+<!--										{{ message }}-->
+<!--									</div>-->
+<!--							{% endfor %}-->
+<!--						{% endif %}-->
 					</form>
+					{% endif %}
 				</th>
 
-				<th colspan="1" style="background: #FFFFFF; border: 1px solid #ddd">Итого за период</th>
+				<th colspan="1" style="background: #FFFFFF; border: 1px solid #ddd">Итого за период:</th>
 				<th colspan="1" style="background: #FFFFFF; border: 1px solid #ddd">{{amount_services}}</th>
 				<th colspan="1"style="background: #FFFFFF; border: 0px"></th>
 				<th colspan="1" style="background: #FFFFFF; border: 1px solid #ddd">{{amount_payments}}</th>
@@ -137,4 +146,3 @@
 </body>
 
 </html>
-

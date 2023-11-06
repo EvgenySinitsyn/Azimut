@@ -5,20 +5,22 @@ from dateutil.relativedelta import relativedelta
 
 
 def get_result_sheet(user_id, date_start, date_end, inn, name):
-    current_date = datetime.now().strftime('%Y-%m')
+    current_date = (datetime.now() - relativedelta(months=1)).strftime('%Y-%m')
     condition = f" and '{current_date}-01' <= ***"
 
     if date_end:
         date_end = datetime.strptime(date_end + '-01', '%Y-%m-%d') + relativedelta(months=1)
 
     if date_start and date_end:
-        condition = f" and '{date_start}-01' <= *** < '{date_end}'"
+        condition = f" and '{date_start}-01' <= *** and *** < '{date_end}'"
 
     elif date_start:
         condition = f" and '{date_start}-01' <= ***"
 
     elif date_end:
-        condition = f" and '{date_end.year}-01-01' <= *** < '{date_end}'"
+
+        condition = f" and '{date_end.year}-01-01' <= *** and *** < '{date_end}'"
+
 
     if inn:
         condition += f" and rc.inn = '{inn}'"

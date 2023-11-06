@@ -7,5 +7,3 @@ class LoginUserForm(AuthenticationForm):
                                widget=forms.TextInput(attrs={'class': 'form-control item', 'placeholder': 'Логин'}))
     password = forms.CharField(label='Пароль:', widget=forms.PasswordInput(
         attrs={'class': 'form-control item', 'placeholder': 'Пароль'}))
-
-

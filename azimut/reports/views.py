@@ -4,6 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.contrib import messages
 
 from .forms import LoginUserForm
 
@@ -24,18 +25,23 @@ def result(request):
     date_end = None
     inn = None
     name = None
+    group_name = request.user.groups.get().name
+
     if request.method == 'POST':
         if "download_file" in request.POST:
             files = request.FILES.getlist('excel_file')
-            for file in files:
-                print(file)
+            file_name = str(files[0])
+            with open(f'./files/{file_name}', 'wb+') as destination:
+                for chunk in files[0].chunks():
+                    destination.write(chunk)
+            start_parsing(f'./files/{file_name}')
+            # messages.info(request, 'файл загружен')
 
         elif "filter" in request.POST:
             date_start = request.POST['date_start']
             date_end = request.POST['date_end']
             inn = request.POST['inn']
             name = request.POST['name']
-            print(user_id, date_start, date_end, inn, name)
 
     result_sheet = get_result_sheet(user_id,
                                     date_start,
@@ -49,9 +55,10 @@ def result(request):
         amount_payments += Decimal(row[7] if row[7] else 0)
         amount_fee += Decimal(row[9] if row[9] else 0)
     context = {'result_sheet': result_sheet,
-               'amount_services': amount_services,
-               'amount_payments': amount_payments,
-               'amount_fee': amount_fee,
+               'amount_services': '{0:,}'.format(amount_services).replace(',', ' '),
+               'amount_payments': '{0:,}'.format(amount_payments).replace(',', ' '),
+               'amount_fee': '{0:,}'.format(amount_fee).replace(',', ' '),
+               'group_name': group_name,
                }
 
     return render(request, 'reports/result.html', context=context)

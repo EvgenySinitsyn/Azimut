@@ -26,13 +26,13 @@ class Upd(models.Model):
         return str(self.number)
 
     class Meta:
-        verbose_name = "УПД"
-        verbose_name_plural = "УПД"
+        verbose_name = "Услуга УПД"
+        verbose_name_plural = "Услуги УПД"
         ordering = ["id"]
 
 
 class Object(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Наименование")
+    name = models.CharField(max_length=255, verbose_name="Наименование", unique=True)
     group = models.ManyToManyField(Group, verbose_name="Группа пользователя", through="ObjectGroup")
 
     def __str__(self):
@@ -85,6 +85,6 @@ class ObjectGroup(models.Model):
         return str(self.fee)
 
     class Meta:
-        verbose_name = "Выплата"
-        verbose_name_plural = "Выплаты"
+        verbose_name = "Объект группы"
+        verbose_name_plural = "Объекты групп"
         ordering = ["id"]
