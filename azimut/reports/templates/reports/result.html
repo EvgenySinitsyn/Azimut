@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head style="font-family: 'Arial', 'Verdana', sans-serif;">
+    <meta charset="UTF-8">
+    <title>Результат выборки</title>
+	<link type="text/css" href="{% static 'reports/css/style.css' %}" rel="stylesheet" />
+</head>
+<body style="font-family: 'Arial', 'Verdana', sans-serif;">
+
+<div style="width: 1100px; " >
+<!--Выбор даты-->
+	 <button style="font-size: 14px; float: right;"><a href="{% url 'logout' %}" style="text-decoration: none; color: #000000; " >Выйти</a></button>
+ <form method="post">
+	 {% csrf_token %}
+       <p style="font-size: 15px;">Период с
+       <input type="month" name="date_start" style="font-size: 14px; outline:none;"> по
+	   <input type="month" name="date_end" style="font-size: 14px; outline:none;">
+
+	   <input type="text" name="inn" placeholder="ИНН" style="font-size: 14px; outline:none;">
+	   <input type="text" name="name" placeholder="Наименование" style="font-size: 14px; outline:none;">
+       <input type="submit" value="Показать" style="font-size: 14px;" name="filter">
+   </p>
+ </form>
+</div>
+
+
+<div class="scroll-table">
+	<table>
+			<col style="width:5%">
+			<col style="width:10%">
+			<col style="width:11%">
+			<col style="width:10%">
+			<col style="width:8%">
+			<col style="width:16%">
+			<col style="width:10%">
+			<col style="width:8%">
+			<col style="width:10%">
+			<col style="width:8%">
+			<col style="width:10%">
+		<thead>
+			<tr>
+				<th rowspan="2">№</th>
+				<th colspan="2" >Контрагент</th>
+				<th colspan="4">Начисление контрагенту</th>
+				<th colspan="2">Платеж</th>
+				<th colspan="2">Вознаграждение</th>
+			</tr>
+			<tr>
+				<th>ИНН</th>
+				<th>Наименование</th>
+				<th>Документ</th>
+				<th>Дата</th>
+				<th>Наименование услуги</th>
+				<th>Стоимость услуги с налогом</th>
+                <th>Дата</th>
+				<th>Сумма</th>
+				<th>Отчетный месяц</th>
+				<th>Выплата %</th>
+
+			</tr>
+		</thead>
+	</table>
+	<div class="scroll-table-body">
+		<table>
+			<col style="width:5%">
+			<col style="width:10%">
+			<col style="width:11%">
+			<col style="width:10%">
+			<col style="width:8%">
+			<col style="width:16%">
+			<col style="width:10%">
+			<col style="width:8%">
+			<col style="width:10%">
+			<col style="width:8%">
+			<col style="width:10%">
+			<tbody>
+			{% for row in result_sheet %}
+
+
+				<tr>
+					<td>{{ forloop.counter }}.</td>
+					<td>{{ row.0 }}</td>
+					<td>{{ row.1 }}</td>
+					<td>{{ row.2 }}</td>
+					<td>{{ row.3 }}</td>
+					<td>{{ row.4 }}</td>
+					<td>{{ row.5 }}</td>
+					<td>{{ row.6 }}</td>
+					<td>{{ row.7 }}</td>
+					<td>{{ row.8 }}</td>
+					<td>{{ row.9 }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+<div class="scroll-table">
+	<table>
+			<col style="width:5%">
+			<col style="width:10%">
+			<col style="width:11%">
+			<col style="width:10%">
+			<col style="width:8%">
+			<col style="width:16%">
+			<col style="width:10%">
+			<col style="width:8%">
+			<col style="width:10%">
+			<col style="width:8%">
+			<col style="width:10%">
+		<thead>
+			<tr>
+				<th colspan="5" style="background: #FFFFFF; border: 0px">
+					{% if group_name == 'АЗИМУТ' %}
+					<form enctype="multipart/form-data" method="post">
+						{% csrf_token %}
+						<p>
+							<input type="file" name="excel_file" accept=".xlsx, .xls" style="font-size: 14px;">
+							<input type="submit" value="Отправить" style="font-size: 14px;" name="download_file">
+						</p>
+<!--						{% if messages %}-->
+<!--							{% for message in messages %}-->
+<!--								    <div class="okno">-->
+<!--										{{ message }}-->
+<!--									</div>-->
+<!--							{% endfor %}-->
+<!--						{% endif %}-->
+					</form>
+					{% endif %}
+				</th>
+
+				<th colspan="1" style="background: #FFFFFF; border: 1px solid #ddd">Итого за период:</th>
+				<th colspan="1" style="background: #FFFFFF; border: 1px solid #ddd">{{amount_services}}</th>
+				<th colspan="1"style="background: #FFFFFF; border: 0px"></th>
+				<th colspan="1" style="background: #FFFFFF; border: 1px solid #ddd">{{amount_payments}}</th>
+				<th colspan="1"style="background: #FFFFFF; border: 0px"></th>
+				<th colspan="1" style="background: #FFFFFF; border: 1px solid #ddd">{{amount_fee}}</th>
+
+			</tr>
+		</thead>
+	</table>
+</div>
+
+</body>
+
+</html>

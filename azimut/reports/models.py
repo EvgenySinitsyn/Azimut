@@ -3,7 +3,6 @@ from django.db import models
 
 
 class Counterparty(models.Model):
-
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     name = models.CharField(max_length=255, verbose_name="Наименование")
     inn = models.BigIntegerField(verbose_name="ИНН", unique=True)
@@ -27,8 +26,21 @@ class Upd(models.Model):
         return str(self.number)
 
     class Meta:
-        verbose_name = "УПД"
-        verbose_name_plural = "УПД"
+        verbose_name = "Услуга УПД"
+        verbose_name_plural = "Услуги УПД"
+        ordering = ["id"]
+
+
+class Object(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Наименование", unique=True)
+    group = models.ManyToManyField(Group, verbose_name="Группа пользователя", through="ObjectGroup")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Объект"
+        verbose_name_plural = "Объекты"
         ordering = ["id"]
 
 
@@ -37,6 +49,7 @@ class Service(models.Model):
     name = models.CharField(max_length=255, verbose_name="Наименование")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Стоимость")
     upd = models.ForeignKey("Upd", on_delete=models.CASCADE, verbose_name="УПД")
+    object = models.ForeignKey("Object", on_delete=models.CASCADE, verbose_name="Объект")
 
     def __str__(self):
         return self.name
@@ -63,29 +76,15 @@ class Payment(models.Model):
         ordering = ["id"]
 
 
-class Object(models.Model):
-    name = models.CharField(max_length=255, verbose_name="Наименование")
-    group = models.ManyToManyField(Group, verbose_name="Группа пользователя", through="ObjectGroup")
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Объект"
-        verbose_name_plural = "Объекты"
-        ordering = ["id"]
-
-
 class ObjectGroup(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name="Группа пользователя")
-    object_db = models.ForeignKey(Object, on_delete=models.CASCADE, verbose_name="Объект")
-    fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Взнос")
+    object = models.ForeignKey(Object, on_delete=models.CASCADE, verbose_name="Объект")
+    fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Выплата")
 
     def __str__(self):
         return str(self.fee)
 
     class Meta:
-        verbose_name = "Взнос"
-        verbose_name_plural = "Взносы"
+        verbose_name = "Объект группы"
+        verbose_name_plural = "Объекты групп"
         ordering = ["id"]
-

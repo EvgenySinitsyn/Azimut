@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <link type="text/css" href="{% static 'reports/css/login.css' %}" rel="stylesheet" />
+</head>
+<body style="font-family: 'Arial', 'Verdana', sans-serif;">
+<form method="post">
+    {% csrf_token %}
+<div class="registration-cssave" style="text-align: center;">
+    <form>
+        {% for p in form %}
+        <div class="form-group">
+            {{ p }}
+        </div>
+        {% endfor %}
+        <div class="form-group">
+            {{ form.errors }}
+            <button class="btn btn-primary btn-block create-account" type="submit" style="background: #f9a34b; color: #000000">Войти в аккаунт</button>
+        </div>
+    </form>
+</div>
+
+
+</form>
+
+
+</body>
+</html>
+

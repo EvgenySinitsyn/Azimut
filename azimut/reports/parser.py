@@ -3,8 +3,20 @@ import xlrd
 from reports.models import Counterparty, Upd, Service, Payment, Object
 from decimal import Decimal
 
-PADE_INDEX_SERVICES = 10
-PADE_INDEX_PAYMENTS = 9
+PADE_INDEX_SERVICES = 1
+PADE_INDEX_PAYMENTS = 0
+
+
+# def set_is_relevant_false(month, year):
+#     Service.objects.filter(upd__date__year=year, upd__date__month=month).update(is_relevant=False)
+#     Payment.objects.filter(date__year=year, date__month=month).update(is_relevant=False)
+
+def preparation_for_recording(work_book):
+    current_period = work_book.sheet_by_index(PADE_INDEX_PAYMENTS).row_values(0)[3]
+    current_period = datetime.datetime.strptime(current_period, '%d.%m.%Y').date()
+
+    Payment.objects.filter(date__year=current_period.year, date__month=current_period.month).delete()
+    Service.objects.filter(upd__date__year=current_period.year, upd__date__month=current_period.month).delete()
 
 
 def parse_services(work_book, page_index):
@@ -17,6 +29,12 @@ def parse_services(work_book, page_index):
         upd_number = res[2]
         service_name = res[5]
         service_price = res[6]
+        payment_object = res[0]
+
+        if isinstance(payment_object, float):
+            payment_object = str(payment_object).split('.')[0]
+
+        object_db = Object.objects.get(name=payment_object)
 
         Counterparty.objects.bulk_create([
             Counterparty(name=counterparty_name, inn=counterparty_inn),
@@ -34,17 +52,18 @@ def parse_services(work_book, page_index):
 
         Service.objects.create(name=service_name,
                                price=Decimal(service_price),
-                               upd=upd
+                               upd=upd,
+                               object=object_db
                                )
 
 
 def parse_payments(work_book, page_index):
     show_rows = work_book.sheet_by_index(page_index)
-    for i in range(0, show_rows.nrows):
+    for i in range(show_rows.nrows):
         res = show_rows.row_values(i)
         counterparty_name = res[2]
         counterparty_inn = res[1]
-        payment_date = res[3]
+        payment_date = str(res[3])
         payment_amount = res[4]
         payment_object = res[0]
 
@@ -53,7 +72,6 @@ def parse_payments(work_book, page_index):
 
         object_db = Object.objects.get(name=payment_object)
 
-        # #TODO обработать возможную ошибку
 
         Counterparty.objects.bulk_create([
             Counterparty(name=counterparty_name, inn=int(counterparty_inn)),
@@ -74,7 +92,8 @@ def start_parsing(path_excel: str):
     # Upd.objects.all().delete()
     # Service.objects.all().delete()
     # Payment.objects.all().delete()
-
     work_book = xlrd.open_workbook(r'{}'.format(path_excel))
+    preparation_for_recording(work_book)
     parse_services(work_book, PADE_INDEX_SERVICES)
     parse_payments(work_book, PADE_INDEX_PAYMENTS)
+
