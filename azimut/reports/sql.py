@@ -19,7 +19,7 @@ def get_result_sheet(user_id, date_start, date_end, inn, name):
 
     elif date_end:
 
-        condition = f" and '{date_end.year}-01-01' <= *** and *** < '{date_end}'"
+        condition = f" and '{(date_end - relativedelta(months=1)).year}-01-01' <= *** and *** < '{date_end}'"
 
 
     if inn:
