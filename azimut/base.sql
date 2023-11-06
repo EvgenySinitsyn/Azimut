@@ -1,18 +1,9 @@
-INSERT INTO reports.auth_group (name) VALUES
-	 ('АЗИМУТ'),
-	 ('КУСКОВО'),
-	 ('НOВОМОСКОВСКИЙ'),
-	 ('РИК'),
-	 ('ФЭ');
-
-
-INSERT INTO reports.auth_user_groups (user_id,group_id) VALUES
-	 (1,5),
-	 (2,2),
-	 (3,4),
-	 (4,3),
-	 (5,5),
-	 (6,1);
+INSERT INTO reports.auth_group (id,name) VALUES
+	 (5,'АЗИМУТ'),
+	 (4,'КУСКОВО'),
+	 (3,'НOВОМОСКОВСКИЙ'),
+	 (1,'РИК'),
+	 (2,'ФЭ');
 
 INSERT INTO reports.auth_user (password,last_login,is_superuser,username,first_name,last_name,email,is_staff,is_active,date_joined) VALUES
 	 ('pbkdf2_sha256$600000$jWGmGcFxitizV9XUlbJQEI$Oibz3z9rqJoowSVaCLQVF3KV8uK0hIyzJPwpBq3zLhY=','2023-11-06 09:09:56',1,'admin_azimut','','','admin@admin.ru',1,1,'2023-10-23 13:10:32'),
@@ -30,6 +21,14 @@ INSERT INTO reports.reports_object (name) VALUES
 	 ('5'),
 	 ('Кусково'),
 	 ('Новомосковский');
+
+INSERT INTO reports.auth_user_groups (user_id,group_id) VALUES
+	 (1,5),
+	 (2,2),
+	 (3,4),
+	 (4,3),
+	 (5,5),
+	 (6,1);
 
 INSERT INTO reports.reports_objectgroup (fee,group_id,object_id) VALUES
 	 (30.00,4,6),

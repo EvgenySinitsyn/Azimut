@@ -7,10 +7,6 @@ PADE_INDEX_SERVICES = 1
 PADE_INDEX_PAYMENTS = 0
 
 
-# def set_is_relevant_false(month, year):
-#     Service.objects.filter(upd__date__year=year, upd__date__month=month).update(is_relevant=False)
-#     Payment.objects.filter(date__year=year, date__month=month).update(is_relevant=False)
-
 def preparation_for_recording(work_book):
     current_period = work_book.sheet_by_index(PADE_INDEX_PAYMENTS).row_values(0)[3]
     current_period = datetime.datetime.strptime(current_period, '%d.%m.%Y').date()
@@ -22,6 +18,9 @@ def preparation_for_recording(work_book):
 def parse_services(work_book, page_index):
     show_rows = work_book.sheet_by_index(page_index)
     services = []
+    objects = {}
+    counterparties = {}
+    upds = {}
     for i in range(1, show_rows.nrows):
         res = show_rows.row_values(i)
         counterparty_name = res[3]
@@ -35,25 +34,29 @@ def parse_services(work_book, page_index):
         if isinstance(payment_object, float):
             payment_object = str(payment_object).split('.')[0]
 
-        object_db = Object.objects.get(name=payment_object)
+        if not objects.get(payment_object):
+            objects[payment_object] = Object.objects.get(name=payment_object)
 
-        Counterparty.objects.bulk_create([
-            Counterparty(name=counterparty_name, inn=counterparty_inn),
-        ],
-            ignore_conflicts=True)
-        counterparty = Counterparty.objects.get(inn=counterparty_inn)
+        if not counterparties.get(counterparty_inn):
+            Counterparty.objects.bulk_create([
+                Counterparty(name=counterparty_name, inn=counterparty_inn),
+            ],
+                ignore_conflicts=True)
+            counterparties[counterparty_inn] = Counterparty.objects.get(inn=counterparty_inn)
 
-        Upd.objects.bulk_create([
-            Upd(date=datetime.datetime.strptime(upd_date, '%d.%m.%Y').date(),
-                number=res[2],
-                counterparty=counterparty)
-        ],
-            ignore_conflicts=True)
-        upd = Upd.objects.get(number=upd_number)
+        if not upds.get(upd_number):
+            Upd.objects.bulk_create([
+                Upd(date=datetime.datetime.strptime(upd_date, '%d.%m.%Y').date(),
+                    number=res[2],
+                    counterparty=counterparties[counterparty_inn])
+            ],
+                ignore_conflicts=True)
+            upds[upd_number] = Upd.objects.get(number=upd_number)
+
         services.append(Service(name=service_name,
                                 price=Decimal(service_price),
-                                upd=upd,
-                                object=object_db
+                                upd=upds[upd_number],
+                                object=objects[payment_object]
                                 ))
 
     Service.objects.bulk_create(services)
@@ -62,10 +65,12 @@ def parse_services(work_book, page_index):
 def parse_payments(work_book, page_index):
     show_rows = work_book.sheet_by_index(page_index)
     payments = []
+    objects = {}
+    counterparties = {}
     for i in range(show_rows.nrows):
         res = show_rows.row_values(i)
         counterparty_name = res[2]
-        counterparty_inn = res[1]
+        counterparty_inn = int(res[1])
         payment_date = str(res[3])
         payment_amount = res[4]
         payment_object = res[0]
@@ -73,34 +78,31 @@ def parse_payments(work_book, page_index):
         if isinstance(payment_object, float):
             payment_object = str(payment_object).split('.')[0]
 
-        object_db = Object.objects.get(name=payment_object)
+        if not objects.get(payment_object):
+            objects[payment_object] = Object.objects.get(name=payment_object)
 
-        Counterparty.objects.bulk_create([
-            Counterparty(name=counterparty_name, inn=int(counterparty_inn)),
-        ],
-            ignore_conflicts=True)
-
-        counterparty = Counterparty.objects.get(inn=int(counterparty_inn))
+        if not counterparties.get(counterparty_inn):
+            Counterparty.objects.bulk_create([
+                Counterparty(name=counterparty_name, inn=counterparty_inn),
+            ],
+                ignore_conflicts=True)
+            counterparties[counterparty_inn] = Counterparty.objects.get(inn=counterparty_inn)
 
         payments.append(Payment(date=datetime.datetime.strptime(payment_date, '%d.%m.%Y').date(),
                                 amount=Decimal(payment_amount),
-                                counterparty=counterparty,
-                                object=object_db
+                                counterparty=counterparties[counterparty_inn],
+                                object=objects[payment_object]
                                 ))
 
-
     Payment.objects.bulk_create(payments)
+
 
 def start_parsing(path_excel: str):
     # Counterparty.objects.all().delete()
     # Upd.objects.all().delete()
     # Service.objects.all().delete()
     # Payment.objects.all().delete()
-
-    start_time = datetime.datetime.now()
     work_book = xlrd.open_workbook(r'{}'.format(path_excel))
     preparation_for_recording(work_book)
     parse_services(work_book, PADE_INDEX_SERVICES)
     parse_payments(work_book, PADE_INDEX_PAYMENTS)
-    end_time = datetime.datetime.now()
-    print((end_time - start_time))
