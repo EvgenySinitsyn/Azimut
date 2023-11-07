@@ -16,6 +16,7 @@
     justify-content: space-between;
     margin-right: 15px;
     margin-bottom: 10px;
+
 }
 
 .theader {
@@ -41,7 +42,7 @@
 }
 
 .scroll-table-body {
-position: relative;
+    position: relative;
 	max-height: 65vh;
 	overflow:auto;
 	scrollbar-gutter: stable;

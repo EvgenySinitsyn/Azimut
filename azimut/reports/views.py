@@ -1,3 +1,4 @@
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
@@ -12,6 +13,8 @@ from reports.parser import start_parsing
 from reports.sql import get_result_sheet
 from decimal import Decimal
 
+from .models import ObjectGroup
+
 
 def index(request):
     start_parsing('reports/09Сентябрь 2023платежи_услуги (1).xls')
@@ -21,11 +24,14 @@ def index(request):
 @login_required
 def result(request):
     user_id = request.user.id
+    user_name = request.user
     date_start = None
     date_end = None
     inn = None
     name = None
-    group_name = request.user.groups.get().name
+    group = request.user.groups.get()
+    group_name = group.name
+    fee = ObjectGroup.objects.filter(group=group)[0].fee
 
     if request.method == 'POST':
         if "download_file" in request.POST:
@@ -43,11 +49,13 @@ def result(request):
             inn = request.POST['inn']
             name = request.POST['name']
 
-    result_sheet = get_result_sheet(user_id,
-                                    date_start,
-                                    date_end,
-                                    inn,
-                                    name)
+    result_sheet, \
+    default_start_date, \
+    default_end_date = get_result_sheet(user_id,
+                                        date_start,
+                                        date_end,
+                                        inn,
+                                        name)
 
     amount_services, amount_fee, amount_payments = 0, 0, 0
     for row in result_sheet:
@@ -59,6 +67,10 @@ def result(request):
                'amount_payments': '{0:,}'.format(amount_payments).replace(',', ' '),
                'amount_fee': '{0:,}'.format(amount_fee).replace(',', ' '),
                'group_name': group_name,
+               'user_name': user_name,
+               'fee': fee,
+               'default_start_date': default_start_date,
+               'default_end_date': default_end_date,
                }
 
     return render(request, 'reports/result.html', context=context)

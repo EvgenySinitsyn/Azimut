@@ -6,19 +6,27 @@ from dateutil.relativedelta import relativedelta
 
 def get_result_sheet(user_id, date_start, date_end, inn, name):
     current_date = (datetime.now() - relativedelta(months=1)).strftime('%Y-%m')
+    default_start_date = current_date
+    default_end_date = current_date
     condition = f" and '{current_date}-01' <= ***"
 
     if date_end:
-        date_end = datetime.strptime(date_end + '-01', '%Y-%m-%d') + relativedelta(months=1)
+        res_date_end = datetime.strptime(date_end + '-01', '%Y-%m-%d') + relativedelta(months=1)
 
     if date_start and date_end:
-        condition = f" and '{date_start}-01' <= *** and *** < '{date_end}'"
+        condition = f" and '{date_start}-01' <= *** and *** < '{res_date_end}'"
+        default_start_date = date_start
+        default_end_date = date_end
 
     elif date_start:
         condition = f" and '{date_start}-01' <= ***"
+        default_start_date = date_start
+        default_end_date = current_date
 
     elif date_end:
-        condition = f" and '{(date_end - relativedelta(months=1)).year}-01-01' <= *** and *** < '{date_end}'"
+        condition = f" and '{(res_date_end - relativedelta(months=1)).year}-01-01' <= *** and *** < '{res_date_end}'"
+        default_start_date = str(date((res_date_end - relativedelta(months=1)).year, 1, 1))[:-3]
+        default_end_date = date_end
 
 
     if inn:
@@ -72,4 +80,4 @@ where aug.user_id = {user_id} {condition.replace('***', 'rp.date')})
 order by year(Дата), month(Дата), Наименование, Дата;''')
 
         rows = cursor.fetchall()
-        return rows
+        return rows, default_start_date, default_end_date
