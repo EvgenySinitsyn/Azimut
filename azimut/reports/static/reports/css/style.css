@@ -2,19 +2,20 @@
     margin-left: auto;
     margin-right: auto;
     min-width: 800px;
-    max-width: 1300px;
-    justify-content: space-between;
     align-items: center;
 }
 
 .main-table {
     margin-top: 2px;
-    margin-bottm: 2px;
+    margin-bottom: 2px;
 }
 
 .header_div {
+    margin-top: 14px;
     display: flex;
     justify-content: space-between;
+    margin-right: 15px;
+    margin-bottom: 10px;
 }
 
 .theader {
