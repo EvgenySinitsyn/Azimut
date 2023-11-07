@@ -73,6 +73,9 @@ class LoginUserView(LoginView):
         return url
 
 
+
+
 def logout_user(request):
     logout(request)
+    print(request)
     return redirect('login')
