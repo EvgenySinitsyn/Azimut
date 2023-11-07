@@ -44,6 +44,7 @@
 position: relative;
 	max-height: 70vh;
 	overflow:auto;
+	scrollbar-gutter: stable;
 	margin-top: 0px;
 	margin-bottom: 5px;
 	border-bottom: 1px solid #eee;
