@@ -32,7 +32,7 @@
 	border-right: 1px solid #ddd;
 	padding: 5px 8px;
     background: #f9a34b;
-	font-size: 12px;
+	font-size: 14px;
 }
 
 .scroll-table table{
@@ -56,13 +56,13 @@ position: relative;
 	border-right: 1px solid #ddd;
 	padding: 5px 8px;
     background: #f9a34b;
-	font-size: 12px;
+	font-size: 14px;
 }
 .scroll-table tbody td {
 	text-align: left;
 	border: 1px solid #ddd;
 	padding: 5px 8px;
-	font-size: 12px;
+	font-size: 14px;
 	vertical-align: top;
 }
 
