@@ -17,7 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# from azimut.reports.views import serverError
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('reports.urls')),
 ]
+
+# handler500 = serverError

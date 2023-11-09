@@ -2,7 +2,7 @@ from dateutil.relativedelta import relativedelta
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseServerError
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -37,6 +37,7 @@ def result(request):
         if "download_file" in request.POST:
             files = request.FILES.getlist('excel_file')
             file_name = str(files[0])
+
             with open(f'./files/{file_name}', 'wb+') as destination:
                 for chunk in files[0].chunks():
                     destination.write(chunk)
@@ -88,3 +89,7 @@ class LoginUserView(LoginView):
 def logout_user(request):
     logout(request)
     return redirect('login')
+
+
+# def serverError(request, exception):
+#     return HttpResponseServerError('<h1>Проверьте корректность загруженного файла</h1>')
