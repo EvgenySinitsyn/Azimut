@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <title>Результат выборки</title>
 	<link type="text/css" href="{% static 'reports/css/style.css' %}" rel="stylesheet" />
+
 </head>
 <body style="font-family: 'Arial', 'Verdana', sans-serif">
 
@@ -17,7 +18,6 @@
         <p style="font-size: 14px; ">Период с
             <input type="month" name="date_start" style="font-size: 14px; outline:none;" value="{{ default_start_date }}"> по
             <input type="month" name="date_end" style="font-size: 14px; outline:none;" value="{{ default_end_date }}">
-
             <input type="text" name="inn" placeholder="ИНН" style="font-size: 14px; outline:none;">
             <input type="text" name="name" placeholder="Наименование" style="font-size: 14px; outline:none;">
             <input type="submit" value="Показать" style="font-size: 14px;" name="filter">
@@ -127,12 +127,12 @@
 			<tr>
 				<th colspan="5" style="background: #FFFFFF; border: 0px">
 					{% if group_name == 'Азимут' %}
-					<form enctype="multipart/form-data" method="post">
+
+					<form enctype="multipart/form-data" method="post" id="the_form">
 						{% csrf_token %}
 						<p>
-							<input checked type="file" name="excel_file" accept=".xlsx, .xls" style="font-size: 14px;" required>
-							<input type="submit" value="Отправить" style="font-size: 14px;" name="download_file">
-
+							<input checked type="file" name="excel_file" accept=".xlsx, .xls" style="font-size: 14px;" required id="file_input">
+							<input id="submit" type="submit" value="Отправить" style="font-size: 14px;" name="download_file">
 						</p>
 
 					</form>
