@@ -130,18 +130,14 @@
 					<form enctype="multipart/form-data" method="post">
 						{% csrf_token %}
 						<p>
-							<input type="file" name="excel_file" accept=".xlsx, .xls" style="font-size: 14px;">
+							<input checked type="file" name="excel_file" accept=".xlsx, .xls" style="font-size: 14px;" required>
 							<input type="submit" value="Отправить" style="font-size: 14px;" name="download_file">
+
 						</p>
-<!--						{% if messages %}-->
-<!--							{% for message in messages %}-->
-<!--								    <div class="okno">-->
-<!--										{{ message }}-->
-<!--									</div>-->
-<!--							{% endfor %}-->
-<!--						{% endif %}-->
+
 					</form>
 					{% endif %}
+
 				</th>
 
 				<th colspan="1" style="background: #FFFFFF; border: 1px solid #ddd">Итого за период:</th>
