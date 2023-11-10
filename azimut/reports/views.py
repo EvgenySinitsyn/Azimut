@@ -58,11 +58,11 @@ def result(request):
                                         inn,
                                         name)
 
-    amount_services, amount_fee, amount_payments = 0, 0, 0
+    amount_services, amount_payments = 0, 0
     for row in result_sheet:
         amount_services += Decimal(row[5] if row[5] else 0)
         amount_payments += Decimal(row[7] if row[7] else 0)
-        amount_fee += Decimal(row[9] if row[9] else 0)
+    amount_fee = round(Decimal(amount_payments / 100 * Decimal(fee)), 2)
     context = {'result_sheet': result_sheet,
                'amount_services': '{0:,}'.format(amount_services).replace(',', ' '),
                'amount_payments': '{0:,}'.format(amount_payments).replace(',', ' '),
