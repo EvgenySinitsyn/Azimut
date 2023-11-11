@@ -102,7 +102,12 @@ def start_parsing(path_excel: str):
     # Upd.objects.all().delete()
     # Service.objects.all().delete()
     # Payment.objects.all().delete()
-    work_book = xlrd.open_workbook(r'{}'.format(path_excel))
-    preparation_for_recording(work_book)
-    parse_services(work_book, PADE_INDEX_SERVICES)
-    parse_payments(work_book, PADE_INDEX_PAYMENTS)
+    try:
+        work_book = xlrd.open_workbook(r'{}'.format(path_excel))
+        preparation_for_recording(work_book)
+        parse_services(work_book, PADE_INDEX_SERVICES)
+        parse_payments(work_book, PADE_INDEX_PAYMENTS)
+        return True
+    except Exception as ex:
+        return ex
+

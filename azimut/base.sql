@@ -1,9 +1,9 @@
 INSERT INTO reports.auth_group (id,name) VALUES
-	 (5,'АЗИМУТ'),
-	 (4,'КУСКОВО'),
-	 (3,'НOВОМОСКОВСКИЙ'),
-	 (1,'РИК'),
-	 (2,'ФЭ');
+	 (5,'Азимут'),
+	 (4,'Кусково'),
+	 (3,'Новомосковский'),
+	 (1,'Русинвестклуб'),
+	 (2,'ФинЭксперт');
 
 INSERT INTO reports.auth_user (password,last_login,is_superuser,username,first_name,last_name,email,is_staff,is_active,date_joined) VALUES
 	 ('pbkdf2_sha256$600000$jWGmGcFxitizV9XUlbJQEI$Oibz3z9rqJoowSVaCLQVF3KV8uK0hIyzJPwpBq3zLhY=','2023-11-06 09:09:56',1,'admin_azimut','','','admin@admin.ru',1,1,'2023-10-23 13:10:32'),

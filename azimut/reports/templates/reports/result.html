@@ -128,14 +128,21 @@
 				<th colspan="5" style="background: #FFFFFF; border: 0px">
 					{% if group_name == 'Азимут' %}
 
-					<form enctype="multipart/form-data" method="post" id="the_form">
+					<form enctype="multipart/form-data" method="post" id="the_form" action="{% url 'result' %}">
 						{% csrf_token %}
 						<p>
-							<input checked type="file" name="excel_file" accept=".xlsx, .xls" style="font-size: 14px;" required id="file_input">
-							<input id="submit" type="submit" value="Отправить" style="font-size: 14px;" name="download_file">
+							<input class="file" type="file" name="excel_file" accept=".xlsx, .xls" style="font-size: 14px;" required id="file_input" onchange="let submitButton = document.querySelector('.submit-button'); submitButton.disabled = false;">
+							<input class="submit-button" type="submit" value="Отправить" style="font-size: 14px;" name="download_file" onclick="var e=this;setTimeout(function(){e.disabled=true;},0);return true;">
+                            {% include 'reports/messages.html' %}
 						</p>
-
 					</form>
+                    <script>
+                        let file_field = document.querySelector('.file');
+                        let submitButton = document.querySelector('.submit-button');
+                        if (file_field.checked) {
+                          submitButton.disabled = false
+                        } else {submitButton.disabled = true}
+                    </script>
 					{% endif %}
 
 				</th>

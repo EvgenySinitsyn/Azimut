@@ -28,9 +28,8 @@ def get_result_sheet(user_id, date_start, date_end, inn, name):
         default_start_date = str(date((res_date_end - relativedelta(months=1)).year, 1, 1))[:-3]
         default_end_date = date_end
 
-
     if inn:
-        condition += f" and rc.inn = '{inn}'"
+        condition += f" and rc.inn LIKE '%{inn}%'"
 
     if name:
         condition += f" and rc.name LIKE '%{name}%'"
@@ -43,7 +42,7 @@ def get_result_sheet(user_id, date_start, date_end, inn, name):
 		concat('УПД № ', ru.number) as Документ,
 		DATE_FORMAT(ru.date, '%d.%m.%Y') as Дата_услуги,
 		rs.name Наименование_услуги, 
-		rs.price as Стоимость_услуг_с_налогом_всего,
+		format(rs.price, 2, 'ru_RU') as Стоимость_услуг_с_налогом_всего,
 		'' as Дата_платежа,
 		'' as Сумма,
 		'' as Месяц,
@@ -65,9 +64,9 @@ union all
 		'' as Наименование_услуги, 
 		'' as Стоимость_услуг_с_налогом_всего,
 		DATE_FORMAT(rp.date, '%d.%m.%Y') as Дата_платежа,
-		rp.amount as Сумма, 
+		format(rp.amount, 2, 'ru_RU') as Сумма, 
 		MONTHNAME(rp.date) as Месяц, 
-		round(ro.fee / 100 * rp.amount, 2) as Выплата,
+		format(ro.fee * 0.01 * rp.amount, 2, 'ru_RU') as Выплата,
 		rp.date as Дата
 		
 FROM reports_payment rp
