@@ -5,7 +5,7 @@ from django.db import models
 class Counterparty(models.Model):
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     name = models.CharField(max_length=255, verbose_name="Наименование")
-    inn = models.BigIntegerField(verbose_name="ИНН", unique=True)
+    inn = models.CharField(max_length=30, verbose_name="ИНН", unique=True)
 
     def __str__(self):
         return self.name

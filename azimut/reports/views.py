@@ -2,7 +2,7 @@ from dateutil.relativedelta import relativedelta
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -14,6 +14,9 @@ from reports.sql import get_result_sheet
 from decimal import Decimal
 
 from .models import ObjectGroup
+import locale
+
+locale.setlocale(locale.LC_ALL, 'ru_RU')
 
 
 def index(request):
@@ -41,8 +44,12 @@ def result(request):
             with open(f'./files/{file_name}', 'wb+') as destination:
                 for chunk in files[0].chunks():
                     destination.write(chunk)
-            start_parsing(f'./files/{file_name}')
-            # messages.info(request, 'файл загружен')
+            parsing = start_parsing(f'./files/{file_name}')
+            # return HttpResponseBadRequest('Формат загруженного файла не поддерживается парсером.')
+            if isinstance(parsing, Exception):
+                messages.error(request, 'Некорректный файл.')
+            else:
+                messages.success(request, 'Файл успешно загружен.')
 
         elif "filter" in request.POST:
             date_start = request.POST['date_start']
@@ -51,22 +58,22 @@ def result(request):
             name = request.POST['name']
 
     result_sheet, \
-    default_start_date, \
-    default_end_date = get_result_sheet(user_id,
-                                        date_start,
-                                        date_end,
-                                        inn,
-                                        name)
+        default_start_date, \
+        default_end_date = get_result_sheet(user_id,
+                                            date_start,
+                                            date_end,
+                                            inn,
+                                            name)
 
-    amount_services, amount_payments = 0, 0
+    amount_services, amount_payments = Decimal('0.00'), Decimal(0.0)
     for row in result_sheet:
-        amount_services += Decimal(row[5] if row[5] else 0)
-        amount_payments += Decimal(row[7] if row[7] else 0)
-    amount_fee = round(Decimal(amount_payments / 100 * Decimal(fee)), 2)
+        amount_services += Decimal(row[5].replace(' ', '').replace(',', '.') if row[5] else 0)
+        amount_payments += Decimal(row[7].replace(' ', '').replace(',', '.') if row[7] else 0)
+    amount_fee = round(amount_payments * fee * Decimal(0.01), 2)
     context = {'result_sheet': result_sheet,
-               'amount_services': '{0:,}'.format(amount_services).replace(',', ' '),
-               'amount_payments': '{0:,}'.format(amount_payments).replace(',', ' '),
-               'amount_fee': '{0:,}'.format(amount_fee).replace(',', ' '),
+               'amount_services': '{0:n}'.format(amount_services),
+               'amount_payments': '{0:n}'.format(amount_payments),
+               'amount_fee': '{0:n}'.format(amount_fee),
                'group_name': group_name,
                'user_name': user_name,
                'fee': fee,
@@ -89,7 +96,6 @@ class LoginUserView(LoginView):
 def logout_user(request):
     logout(request)
     return redirect('login')
-
 
 # def serverError(request, exception):
 #     return HttpResponseServerError('<h1>Проверьте корректность загруженного файла</h1>')
