@@ -16,7 +16,7 @@ from decimal import Decimal
 from .models import ObjectGroup
 import locale
 
-locale.setlocale(locale.LC_ALL, 'ru_RU')
+locale.setlocale(locale.LC_ALL, 'ru_RU.utf-8')
 
 
 def index(request):
