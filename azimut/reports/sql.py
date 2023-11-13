@@ -8,6 +8,8 @@ def get_result_sheet(user_id, date_start, date_end, inn, name):
     current_date = (datetime.now() - relativedelta(months=1)).strftime('%Y-%m')
     default_start_date = current_date
     default_end_date = current_date
+    default_inn = ''
+    default_name = ''
     condition = f" and '{current_date}-01' <= ***"
 
     if date_end:
@@ -30,9 +32,11 @@ def get_result_sheet(user_id, date_start, date_end, inn, name):
 
     if inn:
         condition += f" and rc.inn LIKE '%{inn}%'"
+        default_inn = inn
 
     if name:
         condition += f" and rc.name LIKE '%{name}%'"
+        default_name = name
 
     with connection.cursor() as cursor:
         cursor.execute("SET lc_time_names = 'ru_UA';")
@@ -79,4 +83,4 @@ where aug.user_id = {user_id} {condition.replace('***', 'rp.date')})
 order by year(Дата), month(Дата), Наименование, Дата;''')
 
         rows = cursor.fetchall()
-        return rows, default_start_date, default_end_date
+        return rows, default_start_date, default_end_date, default_inn, default_name
