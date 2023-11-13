@@ -45,7 +45,6 @@ def result(request):
                 for chunk in files[0].chunks():
                     destination.write(chunk)
             parsing = start_parsing(f'./files/{file_name}')
-            # return HttpResponseBadRequest('Формат загруженного файла не поддерживается парсером.')
             if isinstance(parsing, Exception):
                 messages.error(request, 'Некорректный файл.')
             else:
@@ -58,12 +57,14 @@ def result(request):
             name = request.POST['name']
 
     result_sheet, \
-        default_start_date, \
-        default_end_date = get_result_sheet(user_id,
-                                            date_start,
-                                            date_end,
-                                            inn,
-                                            name)
+    default_start_date, \
+    default_end_date, \
+    default_inn, \
+    default_name = get_result_sheet(user_id,
+                                    date_start,
+                                    date_end,
+                                    inn,
+                                    name)
 
     amount_services, amount_payments = Decimal('0.00'), Decimal(0.0)
     for row in result_sheet:
@@ -79,6 +80,8 @@ def result(request):
                'fee': fee,
                'default_start_date': default_start_date,
                'default_end_date': default_end_date,
+               'default_inn': default_inn,
+               'default_name': default_name,
                }
 
     return render(request, 'reports/result.html', context=context)
@@ -96,6 +99,3 @@ class LoginUserView(LoginView):
 def logout_user(request):
     logout(request)
     return redirect('login')
-
-# def serverError(request, exception):
-#     return HttpResponseServerError('<h1>Проверьте корректность загруженного файла</h1>')
