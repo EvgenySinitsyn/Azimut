@@ -98,10 +98,6 @@ def parse_payments(work_book, page_index):
 
 
 def start_parsing(path_excel: str):
-    # Counterparty.objects.all().delete()
-    # Upd.objects.all().delete()
-    # Service.objects.all().delete()
-    # Payment.objects.all().delete()
     try:
         work_book = xlrd.open_workbook(r'{}'.format(path_excel))
         preparation_for_recording(work_book)

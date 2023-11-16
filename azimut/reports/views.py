@@ -66,7 +66,7 @@ def result(request):
                                     inn,
                                     name)
 
-    amount_services, amount_payments = Decimal('0.00'), Decimal(0.0)
+    amount_services, amount_payments = Decimal('0.00'), Decimal('0.00')
     for row in result_sheet:
         amount_services += Decimal(row[5].replace(' ', '').replace(',', '.') if row[5] else 0)
         amount_payments += Decimal(row[7].replace(' ', '').replace(',', '.') if row[7] else 0)
