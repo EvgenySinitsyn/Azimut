@@ -24,7 +24,7 @@ def parse_services(work_book, page_index):
     for i in range(1, show_rows.nrows):
         res = show_rows.row_values(i)
         counterparty_name = res[3]
-        counterparty_inn = res[4]
+        counterparty_inn = int(res[4])
         upd_date = res[1]
         upd_number = res[2]
         service_name = res[5]
