@@ -13,6 +13,7 @@ def preparation_for_recording(work_book):
 
     Payment.objects.filter(date__year=current_period.year, date__month=current_period.month).delete()
     Service.objects.filter(upd__date__year=current_period.year, upd__date__month=current_period.month).delete()
+    Upd.objects.filter(date__year=current_period.year, date__month=current_period.month).delete()
 
 
 def parse_services(work_book, page_index):
@@ -23,11 +24,11 @@ def parse_services(work_book, page_index):
     upds = {}
     for i in range(1, show_rows.nrows):
         res = show_rows.row_values(i)
-        counterparty_name = res[3]
+        counterparty_name = str(res[3])
         counterparty_inn = int(res[4])
         upd_date = res[1]
-        upd_number = res[2]
-        service_name = res[5]
+        upd_number = int(res[2])
+        service_name = str(res[5])
         service_price = res[6]
         payment_object = res[0]
 
@@ -69,7 +70,7 @@ def parse_payments(work_book, page_index):
     counterparties = {}
     for i in range(show_rows.nrows):
         res = show_rows.row_values(i)
-        counterparty_name = res[2]
+        counterparty_name = str(res[2])
         counterparty_inn = int(res[1])
         payment_date = str(res[3])
         payment_amount = res[4]
