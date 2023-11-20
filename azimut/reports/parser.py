@@ -51,7 +51,8 @@ def parse_services(work_book, page_index):
                     number=res[2],
                     counterparty=counterparties[counterparty_inn])
             ],
-                ignore_conflicts=True)
+                ignore_conflicts=True,
+            update_fields=True)
             upds[upd_number] = Upd.objects.get(number=upd_number)
 
         services.append(Service(name=service_name,
@@ -86,7 +87,8 @@ def parse_payments(work_book, page_index):
             Counterparty.objects.bulk_create([
                 Counterparty(name=counterparty_name, inn=counterparty_inn),
             ],
-                update_conflicts=True)
+                update_conflicts=True,
+            update_fields=True)
             counterparties[counterparty_inn] = Counterparty.objects.get(inn=counterparty_inn)
 
         payments.append(Payment(date=datetime.datetime.strptime(payment_date, '%d.%m.%Y').date(),
