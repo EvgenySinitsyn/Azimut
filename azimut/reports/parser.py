@@ -13,6 +13,7 @@ def preparation_for_recording(work_book):
 
     Payment.objects.filter(date__year=current_period.year, date__month=current_period.month).delete()
     Service.objects.filter(upd__date__year=current_period.year, upd__date__month=current_period.month).delete()
+    Upd.objects.filter(date__year=current_period.year, date__month=current_period.month).delete()
 
 
 def parse_services(work_book, page_index):
