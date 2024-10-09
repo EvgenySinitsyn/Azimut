@@ -16,7 +16,7 @@ class Config:
     db: DatabaseConfig
 
 
-def load_config(path: str | None) -> Config:
+def load_config(path) -> Config:
     env: Env = Env()
     env.read_env(path)
 
@@ -29,3 +29,9 @@ def load_config(path: str | None) -> Config:
             db_password=env('DB_PASSWORD'),
         )
     )
+
+
+def get_env_secret_key(path) -> str:
+    env: Env = Env()
+    env.read_env(path)
+    return env('SECRET_KEY')

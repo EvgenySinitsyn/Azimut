@@ -16,7 +16,7 @@ from pathlib import Path
 from django.urls import reverse_lazy
 from dotenv import find_dotenv
 
-from azimut.config_data.config import load_config, Config
+from azimut.config_data.config import load_config, Config, get_env_secret_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,12 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@o1$*moc-52rkqv)w*&$_yorgnpv+urf7)!mq)+*7qs9#05m%q'
+SECRET_KEY = get_env_secret_key(find_dotenv('.env'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
