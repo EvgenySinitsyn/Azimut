@@ -19,7 +19,7 @@ class Counterparty(models.Model):
 class Upd(models.Model):
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")
     date = models.DateField(verbose_name="Дата")
-    number = models.IntegerField(verbose_name="Номер УПД", unique=True)
+    number = models.IntegerField(verbose_name="Номер УПД")
     counterparty = models.ForeignKey("Counterparty", on_delete=models.CASCADE, verbose_name="Контрагент")
 
     def __str__(self):
@@ -29,6 +29,9 @@ class Upd(models.Model):
         verbose_name = "Услуга УПД"
         verbose_name_plural = "Услуги УПД"
         ordering = ["id"]
+        constraints = [
+            models.UniqueConstraint(fields=["number", "date"], name="unique_number_per_date")
+        ]
 
 
 class Object(models.Model):

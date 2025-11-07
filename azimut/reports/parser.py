@@ -52,7 +52,7 @@ def parse_services(work_book, page_index):
                     counterparty=counterparties[counterparty_inn])
             ],
                 ignore_conflicts=True)
-            upds[upd_number] = Upd.objects.get(number=upd_number)
+            upds[upd_number] = Upd.objects.get(number=upd_number, date=datetime.datetime.strptime(upd_date, '%d.%m.%Y').date())
 
         services.append(Service(name=service_name,
                                 price=Decimal(service_price),

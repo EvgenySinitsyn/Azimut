@@ -46,7 +46,7 @@ def result(request):
                     destination.write(chunk)
             parsing = start_parsing(f'./files/{file_name}')
             if isinstance(parsing, Exception):
-                with open('log', 'w') as log:
+                with open('log', 'a') as log:
                     log.write(str(parsing.args))
                 messages.error(request, 'Некорректный файл.')
             else:
